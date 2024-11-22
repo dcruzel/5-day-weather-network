@@ -1,6 +1,14 @@
 [
 	{
-		"name": "Austin",
+		"cityName": "Austin",
 		"id": "243f67e4-d982-41d6-b29a-2d76cd440ba2"
+	},
+	{
+		"cityName": "Toronto",
+		"id": "e29578d7-6801-41b1-8c4f-329af4314037"
+	},
+	{
+		"cityName": "Houston",
+		"id": "c7f4dce0-130c-45e8-9ecc-2a04fa241dbd"
 	}
 ]
