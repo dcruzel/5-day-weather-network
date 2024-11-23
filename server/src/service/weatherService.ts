@@ -40,59 +40,100 @@ class WeatherService {
   // REMOVED: private buildGeocodeQuery(): string {}
   // REMOVED: TODO: Create fetchAndDestructureLocationData method
   // REMOVED: private async fetchAndDestructureLocationData() {}
+  // REMOVED: Create fetchWeatherData method
+  // REMOVED: private async fetchWeatherData(coordinates: Coordinates) {}
 
   // TODO: Create buildWeatherQuery method
-  // private buildWeatherQuery(coordinates: Coordinates): string {}
+  private buildWeatherQuery(forecastWeather: any[], i: number) {
+    try{
+      const weatherItem = forecastWeather.list[i];
+      const weatherInDays: Weather = {
+        id: forecastWeather.city.id.toString(),
+        cityName: forecastWeather.city.name,
+        date: weatherItem.dt_txt.slice(0,10),
+        icon: weatherItem.weather[0].icon,
+        iconDescription: weatherItem.weather[0].description,
+        tempF: weatherItem.main.temp.toFixed(2),
+        humidity: weatherItem.main.humidity.toString(),
+        windSpeed: weatherItem.wind.speed.toString(),
+      };
+      return weatherInDays;
+    }catch(err){
+      console.log('Error:', err);
+      return err;
+    }
+  }
 
-  // TODO: Create fetchWeatherData method
-  // private async fetchWeatherData(coordinates: Coordinates) {}
+  
 
-  // TODO: Build parseCurrentWeather method
-  // private parseCurrentWeather(response: any) {}
+  // ADDED: Build parseCurrentWeather method
+  private parseCurrentWeather (currentWeather: any) {
+    try{  
+      const currentDate = new Date();
+      const currentWeatherData: Weather = {
+        id: currentWeather.id.toString(),
+        cityName: currentWeather.name,
+        date:`${currentDate.getDay()}/${currentDate.getMonth()}/${currentDate.getFullYear()}`,
+        icon: currentWeather.weather[0].icon,
+        iconDescription: currentWeather.weather[0].description,
+        tempF: currentWeather.main.temp.toFixed(2),
+        humidity: currentWeather.main.humidity.toString(),
+        windSpeed: currentWeather.wind.speed.toString(),
+      };
+      return currentWeatherData;
+    }catch(err){
+      console.log('Error:', err);
+      return err;
+    }
+  }
   
   // ADDED: Complete buildForecastArray method
   private buildForecastArray(currentWeather: any, weatherData: any[]) {
-    //console.log(currentWeather);
-    console.log(weatherData);
-    const currentDate = new Date();
-    const weatherArray: Weather[]=[];
-    const currentWeatherData: Weather = {
-      id: currentWeather.id.toString(),
-      cityName: currentWeather.name,
-      date: currentDate.toString(),
-      icon: currentWeather.weather[0].icon,
-      iconDescription: currentWeather.weather[0].description,
-      tempF: currentWeather.main.temp.toFixed(2),
-      humidity: currentWeather.main.humidity.toString(),
-      windSpeed: currentWeather.wind.speed.toString(),
-    };
-    console.log(currentWeatherData);
-    weatherArray.push(currentWeatherData);
-    console.log(weatherArray[0]);
-    return weatherArray;
+    try{
+      console.log(weatherData);
+      const weatherArray: Weather[]=[];
+      let currentWeatherData : Weather;
+      currentWeatherData=this.parseCurrentWeather(currentWeather); 
+      weatherArray.push(currentWeatherData);
+      console.log(weatherArray[0]);
+      let forecastWeatherData:Weather;
+      for (let i=1; i<5; i++){
+        forecastWeatherData=this.buildWeatherQuery(weatherData, i);
+        weatherArray.push(forecastWeatherData);
+      }
+      return weatherArray;
+    }catch(err){
+      console.log('Error:', err);
+      return err;
+    }
   }
   
   // ADDED: Complete getWeatherForCity method
 
   //5-day Forecast https://api.openweathermap.org/data/2.5/forecast?q={city name}&appid={API key}&units=imperial
-//Current weather https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}&units=imperial
+  //Current weather https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}&units=imperial
 
 async getWeatherForCity({cityName}: {cityName:string}) {
     try {
-      console.log(`${this.baseURL_Current}${cityName}&appid=${this.apiKey}&units=imperial`);
+      //Check if the fetch API link for current weather is right
+      //console.log(`${this.baseURL_Current}${cityName}&appid=${this.apiKey}&units=imperial`);
+      
+      //Fetch the api current weather information and store response in weatherCurrent
       const responseCurrent = await fetch(
         `${this.baseURL_Current}${cityName}&appid=${this.apiKey}&units=imperial`
       );
-      console.log(`${this.baseURL_Forecast}${cityName}&appid=${this.apiKey}&units=imperial`);
+      
+      //Check if the fetch API link for forecast weather is right
+      //console.log(`${this.baseURL_Forecast}${cityName}&appid=${this.apiKey}&units=imperial`);
+
+      //Fetch the api forecast weather information and store response in weatherForecast
       const responseForecast = await fetch(
         `${this.baseURL_Forecast}${cityName}&appid=${this.apiKey}&units=imperial`
       );
       const weatherCurrent = await responseCurrent.json();
-      console.log(`CURRENT WEATHER`);
-      console.log(weatherCurrent);
+      
       const weatherForecast = await responseForecast.json();
-      console.log(`FORECAST WEATHER`);
-      console.log(weatherForecast);
+      
       const mappedWeather = this.buildForecastArray(weatherCurrent, weatherForecast);
     
       return mappedWeather;
