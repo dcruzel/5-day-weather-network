@@ -118,11 +118,10 @@ const renderForecast = (forecast: any): void => {
 };
 
 const renderForecastCard = (forecast: any) => {
-  const { date, icon, iconDescription, tempF, windSpeed, humidity } = forecast;
-
+  const { id, cityName, date, icon, iconDescription, tempF, windSpeed, humidity } = forecast;
   const { col, cardTitle, weatherIcon, tempEl, windEl, humidityEl } =
     createForecastCard();
-
+  console.log(`${id} ${cityName}`)
   // Add content to elements
   cardTitle.textContent = date;
   weatherIcon.setAttribute(

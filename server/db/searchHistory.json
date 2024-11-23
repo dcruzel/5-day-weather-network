@@ -4,11 +4,15 @@
 		"id": "243f67e4-d982-41d6-b29a-2d76cd440ba2"
 	},
 	{
-		"cityName": "Toronto",
-		"id": "e29578d7-6801-41b1-8c4f-329af4314037"
+		"cityName": "Vancouver",
+		"id": "7b178ac0-bf98-45ca-b687-33192d02fb81"
 	},
 	{
-		"cityName": "Houston",
-		"id": "c7f4dce0-130c-45e8-9ecc-2a04fa241dbd"
+		"cityName": "Florida",
+		"id": "94a1bce5-6654-4b67-b1b7-6bbacb91d6f0"
+	},
+	{
+		"cityName": "Toronto",
+		"id": "542960dc-8bc4-4f1a-8a72-35538ddf6747"
 	}
 ]

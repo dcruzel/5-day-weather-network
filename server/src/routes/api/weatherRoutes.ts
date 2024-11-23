@@ -4,7 +4,7 @@ const router = Router();
 dotenv.config();
 
 import HistoryService from '../../service/historyService.js';
-//import WeatherService from '../../service/weatherService.js';
+import WeatherService from '../../service/weatherService.js';
 
 // console.log(process.env.API_BASE_URL_LOC);
 // console.log(process.env.API_BASE_URL_CITY);
@@ -17,12 +17,11 @@ import HistoryService from '../../service/historyService.js';
 // Path should be '/', but trying to add city path
 router.post('/', async (req: Request, res: Response) => {
 
-  //res.status(418).send("This hasn't been implemented yet");
-  //TO DO: GET weather data from city name
-
+  //ADDED: GET weather data from city name
   //ADDED: Add city to History Service
   try {
     const city = req.body;
+    console.log(WeatherService.getWeatherForCity(city));
     const citystatus = await HistoryService.addCity(city);
     res.json(citystatus);
   } catch (err){
