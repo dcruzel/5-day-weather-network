@@ -25,6 +25,7 @@ class WeatherService {
   private baseURL_Current?: string;
   private baseURL_Forecast?: string;
   private apiKey?: string;
+  private weatherArray: Weather[]=[];
 
   constructor(){
     this.baseURL_Current = process.env.API_BASE_URL_CURRENT || '';
@@ -44,9 +45,12 @@ class WeatherService {
   // REMOVED: private async fetchWeatherData(coordinates: Coordinates) {}
 
   // TODO: Create buildWeatherQuery method
-  private buildWeatherQuery(forecastWeather: any[], i: number) {
+  private buildWeatherQuery(forecastWeather: any, i: number) {
     try{
       const weatherItem = forecastWeather.list[i];
+      if (!weatherItem){
+        return `Weather item not found`;
+      }
       const weatherInDays: Weather = {
         id: forecastWeather.city.id.toString(),
         cityName: forecastWeather.city.name,
@@ -57,6 +61,7 @@ class WeatherService {
         humidity: weatherItem.main.humidity.toString(),
         windSpeed: weatherItem.wind.speed.toString(),
       };
+      this.weatherArray.push(weatherInDays);
       return weatherInDays;
     }catch(err){
       console.log('Error:', err);
@@ -80,6 +85,7 @@ class WeatherService {
         humidity: currentWeather.main.humidity.toString(),
         windSpeed: currentWeather.wind.speed.toString(),
       };
+      this.weatherArray.push(currentWeatherData);
       return currentWeatherData;
     }catch(err){
       console.log('Error:', err);
@@ -88,20 +94,15 @@ class WeatherService {
   }
   
   // ADDED: Complete buildForecastArray method
-  private buildForecastArray(currentWeather: any, weatherData: any[]) {
+  private buildForecastArray(currentWeather: any, weatherData: any) {
     try{
       console.log(weatherData);
-      const weatherArray: Weather[]=[];
-      let currentWeatherData : Weather;
-      currentWeatherData=this.parseCurrentWeather(currentWeather); 
-      weatherArray.push(currentWeatherData);
-      console.log(weatherArray[0]);
-      let forecastWeatherData:Weather;
+      this.weatherArray=[];
+      this.parseCurrentWeather(currentWeather); 
       for (let i=1; i<5; i++){
-        forecastWeatherData=this.buildWeatherQuery(weatherData, i);
-        weatherArray.push(forecastWeatherData);
+        this.buildWeatherQuery(weatherData, i);
       }
-      return weatherArray;
+      return this.weatherArray;
     }catch(err){
       console.log('Error:', err);
       return err;
