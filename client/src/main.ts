@@ -28,6 +28,18 @@ const humidityEl: HTMLParagraphElement = document.getElementById(
   'humidity'
 ) as HTMLParagraphElement;
 
+//Add Weather interface
+interface Weather {
+  id: string;
+  cityName: string;
+  date: string;
+  icon: string;
+  iconDescription: string;
+  tempF: string;
+  windSpeed: string;
+  humidity: string;
+}
+
 /*
 
 API Calls
@@ -35,6 +47,7 @@ API Calls
 */
 
 const fetchWeather = async (cityName: string) => {
+  //add city 
   const response = await fetch('/api/weather/', {
     method: 'POST',
     headers: {
@@ -42,15 +55,17 @@ const fetchWeather = async (cityName: string) => {
     },
     body: JSON.stringify({ cityName }),
   });
-
-  const weatherData = await response.json();
-
+  //Await for weatherData array
+  const weatherData = await response.json(); 
+  //Print out the weatherData away
   console.log('weatherData: ', weatherData);
-
+  //Render the current weather
   renderCurrentWeather(weatherData[0]);
-  renderForecast(weatherData.slice(1));
+  //Render the weather for the next four days
+  renderForecast(weatherData);
 };
 
+//Get the search history from the route:'/api/weather/history'
 const fetchSearchHistory = async () => {
   const history = await fetch('/api/weather/history', {
     method: 'GET',
@@ -60,7 +75,7 @@ const fetchSearchHistory = async () => {
   });
   return history;
 };
-
+//Delete the city by id from the route:'/api/weather/history'
 const deleteCityFromHistory = async (id: string) => {
   await fetch(`/api/weather/history/${id}`, {
     method: 'DELETE',
@@ -76,12 +91,16 @@ Render Functions
 
 */
 
-const renderCurrentWeather = (currentWeather: any): void => {
-  const { city, date, icon, iconDescription, tempF, windSpeed, humidity } =
+//Render the current weather
+const renderCurrentWeather = (currentWeather: Weather): void => {
+  //deconstruct the weather
+  const {id, cityName, date, icon, iconDescription, tempF, windSpeed, humidity } =
     currentWeather;
-
+  console.log(`${id} ${cityName}`);
   // convert the following to typescript
-  heading.textContent = `${city} (${date})`;
+
+  //Print the current information to the webpage
+  heading.textContent = `${cityName} (${date})`;
   weatherIcon.setAttribute(
     'src',
     `https://openweathermap.org/img/w/${icon}.png`
@@ -99,7 +118,8 @@ const renderCurrentWeather = (currentWeather: any): void => {
   }
 };
 
-const renderForecast = (forecast: any): void => {
+//Render the next four days of weather
+const renderForecast = (forecast: Weather[]): void => {
   const headingCol = document.createElement('div');
   const heading = document.createElement('h4');
 
@@ -112,12 +132,14 @@ const renderForecast = (forecast: any): void => {
     forecastContainer.append(headingCol);
   }
 
-  for (let i = 0; i < forecast.length; i++) {
+  for (let i = 1; i < forecast.length; i++) {
     renderForecastCard(forecast[i]);
   }
 };
 
-const renderForecastCard = (forecast: any) => {
+//Render each of the Forecast weather to a separate ForecastCard
+const renderForecastCard = (forecast: Weather) => {
+  //deconstructe the weather properties
   const { id, cityName, date, icon, iconDescription, tempF, windSpeed, humidity } = forecast;
   const { col, cardTitle, weatherIcon, tempEl, windEl, humidityEl } =
     createForecastCard();
@@ -138,6 +160,7 @@ const renderForecastCard = (forecast: any) => {
   }
 };
 
+//Render the search history to the website
 const renderSearchHistory = async (searchHistory: any) => {
   const historyList = await searchHistory.json();
 

@@ -21,9 +21,9 @@ router.post('/', async (req: Request, res: Response) => {
   //ADDED: Add city to History Service
   try {
     const city = req.body;
-    console.log(WeatherService.getWeatherForCity(city));
-    const citystatus = await HistoryService.addCity(city);
-    res.json(citystatus);
+    const weatherData = await (WeatherService.getWeatherForCity(city));
+    HistoryService.addCity(city);
+    res.json(weatherData);
   } catch (err){
     console.log(err);
     res.status(500).json(err);

@@ -1,12 +1,11 @@
 //import fs to write weather and dotenv to read API 
-//import fs from 'node:fs/promises';
 import dotenv from 'dotenv';
 dotenv.config();
 
 //5-day Forecast https://api.openweathermap.org/data/2.5/forecast?q={city name}&appid={API key}&units=imperial
 //Current weather https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}&units=imperial
 
-// ADDED: Define a class for the Weather object: 
+// ADDED: Defined a class for the Weather object 
 
 interface Weather {
    id: string;
@@ -19,9 +18,10 @@ interface Weather {
    humidity: string;
  }
 
-// ADDED: Complete the WeatherService class
+// ADDED: Completed the WeatherService class
 class WeatherService {
-   // TODO: Define the baseURL, API key, and city name properties
+   // ADDED: Defined the baseURL, API key, and city name properties
+   // Added weatherArray and initialize a blank array
   private baseURL_Current?: string;
   private baseURL_Forecast?: string;
   private apiKey?: string;
@@ -44,13 +44,17 @@ class WeatherService {
   // REMOVED: Create fetchWeatherData method
   // REMOVED: private async fetchWeatherData(coordinates: Coordinates) {}
 
-  // TODO: Create buildWeatherQuery method
+  // ADDED: Created buildWeatherQuery method
   private buildWeatherQuery(forecastWeather: any, i: number) {
     try{
-      const weatherItem = forecastWeather.list[i];
+      //Each 8 set is a different day of the weather for the next four days
+      const weatherItem = forecastWeather.list[i*8];
+
+      //Ensure weatherItem exists
       if (!weatherItem){
         return `Weather item not found`;
       }
+      //Set API Weather forecast to push the properties to the Weather class
       const weatherInDays: Weather = {
         id: forecastWeather.city.id.toString(),
         cityName: forecastWeather.city.name,
@@ -61,8 +65,14 @@ class WeatherService {
         humidity: weatherItem.main.humidity.toString(),
         windSpeed: weatherItem.wind.speed.toString(),
       };
+      //console.log(`FORECAST WEATHER ${i} DAY`);
+      //console.log(weatherInDays);
+      
+      //Push the Weather into the array for 4 days in addition to the current weather
       this.weatherArray.push(weatherInDays);
       return weatherInDays;
+
+    //Catch error below
     }catch(err){
       console.log('Error:', err);
       return err;
@@ -71,38 +81,53 @@ class WeatherService {
 
   
 
-  // ADDED: Build parseCurrentWeather method
+  // ADDED: Built parseCurrentWeather method
   private parseCurrentWeather (currentWeather: any) {
     try{  
-      const currentDate = new Date();
+      //get the current date 
+      let currentDate = new Date();
+      //console.log(`${currentDate.getMonth()+1}/${currentDate.getDate()}/${currentDate.getFullYear()}`);
+      //set the current weather API to the Weather properties
       const currentWeatherData: Weather = {
         id: currentWeather.id.toString(),
         cityName: currentWeather.name,
-        date:`${currentDate.getDay()}/${currentDate.getMonth()}/${currentDate.getFullYear()}`,
+        date:`${currentDate.getMonth()+1}/${currentDate.getDate()}/${currentDate.getFullYear()}`,
         icon: currentWeather.weather[0].icon,
         iconDescription: currentWeather.weather[0].description,
         tempF: currentWeather.main.temp.toFixed(2),
         humidity: currentWeather.main.humidity.toString(),
         windSpeed: currentWeather.wind.speed.toString(),
       };
+      //console.log(`CURRENT WEATHER`);
+      //console.log(currentWeatherData);
+      
+      //Push the current weather object to the weatherArray.
       this.weatherArray.push(currentWeatherData);
       return currentWeatherData;
+    //Catch any error below and display the error
     }catch(err){
       console.log('Error:', err);
       return err;
     }
   }
   
-  // ADDED: Complete buildForecastArray method
+  // ADDED: Completed buildForecastArray method
   private buildForecastArray(currentWeather: any, weatherData: any) {
     try{
-      console.log(weatherData);
+      //Initialize the weatherArray to blank
       this.weatherArray=[];
-      this.parseCurrentWeather(currentWeather); 
+
+      //Run the first object of the WeatherArray using the parseCurrentWeather function
+      this.parseCurrentWeather(currentWeather);
+
+      //Run the second to fifth object of the WeatherArray using the buildWeatherQuery function and a for loop
       for (let i=1; i<5; i++){
         this.buildWeatherQuery(weatherData, i);
       }
+
+      //Return the weatherArray of the 5 days of weather
       return this.weatherArray;
+    //Catch any error below and display the error
     }catch(err){
       console.log('Error:', err);
       return err;
@@ -134,10 +159,12 @@ async getWeatherForCity({cityName}: {cityName:string}) {
       const weatherCurrent = await responseCurrent.json();
       
       const weatherForecast = await responseForecast.json();
-      
+      //Build the array with the current weather API data and the forecast weather API data
       const mappedWeather = this.buildForecastArray(weatherCurrent, weatherForecast);
-    
+      //Return the weather array of the 5-day forecast
       return mappedWeather;
+
+    //Catch any error below and display the error
     } catch (err) {
       console.log('Error:', err);
       return err;

@@ -1,18 +1,10 @@
 [
 	{
-		"cityName": "Austin",
-		"id": "243f67e4-d982-41d6-b29a-2d76cd440ba2"
-	},
-	{
-		"cityName": "Vancouver",
-		"id": "7b178ac0-bf98-45ca-b687-33192d02fb81"
-	},
-	{
-		"cityName": "Florida",
-		"id": "94a1bce5-6654-4b67-b1b7-6bbacb91d6f0"
+		"cityName": "New York City",
+		"id": "57055261-01b7-46b4-96fe-4ded97e50f1b"
 	},
 	{
 		"cityName": "Toronto",
-		"id": "542960dc-8bc4-4f1a-8a72-35538ddf6747"
+		"id": "f65d4367-f0b0-4be1-b901-d28c8dd624e9"
 	}
 ]
