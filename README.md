@@ -54,7 +54,7 @@ THEN I am again presented with current and future conditions for that city
 
 ## Usage
 - [Github Repo](https://github.com/dcruzel/5-day-weather-network)
-- [Video](https://drive.google.com/file/d/1idjt0aR4dDSOCgFquhARCZmUR73iKCNm/view?usp=sharing)
+- [Render](https://five-day-weather-network.onrender.com)
 
 ## Contact
 
