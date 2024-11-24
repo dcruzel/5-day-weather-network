@@ -58,7 +58,7 @@ class WeatherService {
       const weatherInDays: Weather = {
         id: forecastWeather.city.id.toString(),
         cityName: forecastWeather.city.name,
-        date: weatherItem.dt_txt.slice(0,10),
+        date: `${weatherItem.dt_txt.slice(5,7)}/${weatherItem.dt_txt.slice(8,10)}/${weatherItem.dt_txt.slice(0,4)}`,
         icon: weatherItem.weather[0].icon,
         iconDescription: weatherItem.weather[0].description,
         tempF: weatherItem.main.temp.toFixed(2),
